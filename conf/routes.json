@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "method":"GET",
+      "route":"/hello",
+      "implementation":"de.tlongo.roscoe.routes.HelloWorldRoute"
+    }
+  ]
+}
