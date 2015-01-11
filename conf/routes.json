@@ -2,8 +2,23 @@
   "routes": [
     {
       "method":"GET",
-      "route":"/hello",
+      "route":"/helloworld",
       "implementation":"de.tlongo.roscoe.routes.HelloWorldRoute"
+    },
+    {
+      "method":"POST",
+      "route":"/helloworld",
+      "implementation":"de.tlongo.roscoe.routes.SamplePostRoute"
+    },
+    {
+      "method":"PUT",
+      "route":"/helloworld",
+      "implementation":"de.tlongo.roscoe.routes.SamplePutRoute"
+    },
+    {
+      "method":"DELETE",
+      "route":"/helloworld",
+      "implementation":"de.tlongo.roscoe.routes.SampleDeleteRoute"
     }
   ]
 }

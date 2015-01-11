@@ -50,6 +50,12 @@ public class Roscoe {
         configManager.getRoutes().forEach(route -> {
             if (route.getMethod().equals("GET")) {
                 get(route.getRouteUrl(), route);
+            } else if (route.getMethod().equals("POST")) {
+                post(route.getRouteUrl(), route);
+            } else if (route.getMethod().equals("PUT")) {
+                put(route.getRouteUrl(), route);
+            } if (route.getMethod().equals("DELETE")) {
+                delete(route.getRouteUrl(), route);
             }
         });
     }
