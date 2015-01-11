@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AverageJoe</title>
+
+    <!-- Bootstrap -->
+    <link href="http://{{url}}/assets/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <p><h1 class="text-center">{{welcomemessage}}</h1></p>
+            <p>What you see here is a bootstrap styled view with a heading that was parametrized on the server using
+                the mustache template engine.</p>
+            <p>Changes to views are displayed live when the page is reloaded.</p>
+            <p>Below is a list of available routes.</p>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://{{url}}/assets/twitter-bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

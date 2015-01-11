@@ -9,6 +9,8 @@ public abstract class RoscoeRoute  implements Route {
     String routeUrl;
     String method;
 
+    protected ViewHandler viewHandler;
+
     public void setRouteUrl(String routeUrl) {
         this.routeUrl = routeUrl;
     }
@@ -31,5 +33,9 @@ public abstract class RoscoeRoute  implements Route {
                 "routeUrl='" + routeUrl + '\'' +
                 ", method='" + method + '\'' +
                 '}';
+    }
+
+    public void setViewHandler(ViewHandler viewHandler) {
+        this.viewHandler = viewHandler;
     }
 }

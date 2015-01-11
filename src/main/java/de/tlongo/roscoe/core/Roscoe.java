@@ -37,10 +37,12 @@ public class Roscoe {
 
     private void go() {
         File file = new File(".");
-        logger.debug("Roscoe Root at: ", file.toPath().toAbsolutePath().toString());
+        logger.debug("Roscoe Root at: {}", file.toPath().toAbsolutePath().toString());
         System.setProperty("roscoe.root", file.toPath().toAbsolutePath().toString());
 
         ConfigManager configManager = new ConfigManager();
+
+        externalStaticFileLocation(System.getProperty("roscoe.root"));
 
         configManager.getRoutes().forEach(route -> {
             if (route.getMethod().equals("GET")) {

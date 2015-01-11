@@ -20,16 +20,35 @@ public class ConfigManager {
     String roscoeRoot;
     File configDir;
     JsonObject routesConfig;
+    JsonObject coreConfig;
+    ViewHandler viewHandler;
 
     public ConfigManager() {
         roscoeRoot = System.getProperty("roscoe.root");
         configDir = new File(roscoeRoot + "/conf");
         try {
             routesConfig = new JsonParser().parse(new FileReader(configDir + "/routes.json")).getAsJsonObject();
+            coreConfig = new JsonParser().parse(new FileReader(configDir + "/core.json")).getAsJsonObject();
+
+            viewHandler = instantiateViewHandler(coreConfig.get("viewhandler").getAsString());
         } catch (FileNotFoundException e) {
             logger.error("Could not load routes config {}", configDir + ("/routes.json"));
             throw new RuntimeException("Could not load routes config.");
+        } catch (ClassNotFoundException e) {
+            logger.error("Could not find ViewHandler implemenation.", e);
+            throw new RuntimeException("Could not load viewhandler");
+        } catch (InstantiationException e) {
+            logger.error("Could not instantiate ViewHandler implemenation.", e);
+            throw new RuntimeException("Could not load viewhandler");
+        } catch (IllegalAccessException e) {
+            logger.error("Could not instantiate ViewHandler implemenation.", e);
+            throw new RuntimeException("Could not load viewhandler");
         }
+    }
+
+    private ViewHandler instantiateViewHandler(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Class viewHandlerClass = Class.forName(className);
+        return (ViewHandler)viewHandlerClass.newInstance();
     }
 
     public List<RoscoeRoute> getRoutes() {
@@ -50,6 +69,7 @@ public class ConfigManager {
                 RoscoeRoute roscoeRoute = (RoscoeRoute)routeClass.newInstance();
                 roscoeRoute.setMethod(routeMethod);
                 roscoeRoute.setRouteUrl(routeUrl);
+                roscoeRoute.setViewHandler(viewHandler);
 
                 logger.debug("Loaded Route {}", roscoeRoute);
 
