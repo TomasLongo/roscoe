@@ -6,12 +6,8 @@ package de.tlongo.roscoe.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Route;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static spark.Spark.*;
 public class Roscoe {
@@ -44,7 +40,6 @@ public class Roscoe {
         logger.debug("Roscoe Root at: ", file.toPath().toAbsolutePath().toString());
         System.setProperty("roscoe.root", file.toPath().toAbsolutePath().toString());
 
-        Map<String, List<Route>> routes = new HashMap<>();
         ConfigManager configManager = new ConfigManager();
 
         configManager.getRoutes().forEach(route -> {
