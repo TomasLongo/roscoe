@@ -51,8 +51,11 @@ public class Roscoe {
                 post(route.getRouteUrl(), route);
             } else if (route.getMethod().equals("PUT")) {
                 put(route.getRouteUrl(), route);
-            } if (route.getMethod().equals("DELETE")) {
+            } else if (route.getMethod().equals("DELETE")) {
                 delete(route.getRouteUrl(), route);
+            } else {
+                logger.error("Could not create route for unknown request method '{}'", route.getMethod());
+                throw new RuntimeException("Error creating routes");
             }
         });
     }
