@@ -37,10 +37,12 @@ public class Roscoe {
 
     private void go() {
         File file = new File(".");
-        logger.debug("Roscoe Root at: ", file.toPath().toAbsolutePath().toString());
+        logger.debug("Roscoe Root at: {}", file.toPath().toAbsolutePath().toString());
         System.setProperty("roscoe.root", file.toPath().toAbsolutePath().toString());
 
         ConfigManager configManager = new ConfigManager();
+
+        externalStaticFileLocation(System.getProperty("roscoe.root"));
 
         configManager.getRoutes().forEach(route -> {
             if (route.getMethod().equals("GET")) {
@@ -49,8 +51,11 @@ public class Roscoe {
                 post(route.getRouteUrl(), route);
             } else if (route.getMethod().equals("PUT")) {
                 put(route.getRouteUrl(), route);
-            } if (route.getMethod().equals("DELETE")) {
+            } else if (route.getMethod().equals("DELETE")) {
                 delete(route.getRouteUrl(), route);
+            } else {
+                logger.error("Could not create route for unknown request method '{}'", route.getMethod());
+                throw new RuntimeException("Error creating routes");
             }
         });
     }
