@@ -42,6 +42,7 @@ public class Roscoe {
         externalStaticFileLocation(System.getProperty("roscoe.root"));
 
         ViewHandler viewHandler = instantiateViewHandler(configManager.getConfigItem("core", "viewhandler").asString());
+        
         JsonArray routeArray = configManager.getConfigItem("routes", "routes").jsonElement().getAsJsonArray();
         routeArray.forEach(route -> {
             JsonObject jsonRoute = route.getAsJsonObject();
@@ -53,25 +54,14 @@ public class Roscoe {
             try {
                 Class routeClass = Class.forName(routeImplementation);
 
-                RoscoeRoute roscoeRoute = (RoscoeRoute)routeClass.newInstance();
+                RoscoeRoute roscoeRoute = (RoscoeRoute) routeClass.newInstance();
                 roscoeRoute.setMethod(routeMethod);
                 roscoeRoute.setRouteUrl(routeUrl);
                 roscoeRoute.setViewHandler(viewHandler);
 
-                logger.debug("Loaded Route {}", roscoeRoute);
+                addRouteToSpark(roscoeRoute);
 
-                if (roscoeRoute.getMethod().equals("GET")) {
-                    get(roscoeRoute.getRouteUrl(), roscoeRoute);
-                } else if (roscoeRoute.getMethod().equals("POST")) {
-                    post(roscoeRoute.getRouteUrl(), roscoeRoute);
-                } else if (roscoeRoute.getMethod().equals("PUT")) {
-                    put(roscoeRoute.getRouteUrl(), roscoeRoute);
-                } else if (roscoeRoute.getMethod().equals("DELETE")) {
-                    delete(roscoeRoute.getRouteUrl(), roscoeRoute);
-                } else {
-                    logger.error("Could not create route for unknown request method '{}'", roscoeRoute.getMethod());
-                    throw new RuntimeException("Error creating routes");
-                }
+                logger.debug("Loaded Route {}", roscoeRoute);
             } catch (ClassNotFoundException e) {
                 handleClassLoadingError(routeUrl, routeImplementation);
             } catch (InstantiationException e) {
@@ -82,10 +72,25 @@ public class Roscoe {
 
         });
     }
+    
+    private void addRouteToSpark(RoscoeRoute route) {
+        if (route.getMethod().equals("GET")) {
+            get(route.getRouteUrl(), route);
+        } else if (route.getMethod().equals("POST")) {
+            post(route.getRouteUrl(), route);
+        } else if (route.getMethod().equals("PUT")) {
+            put(route.getRouteUrl(), route);
+        } else if (route.getMethod().equals("DELETE")) {
+            delete(route.getRouteUrl(), route);
+        } else {
+            logger.error("Could not create route for unknown request method '{}'", route.getMethod());
+            throw new RuntimeException("Error creating route from config.");
+        }
+    }
 
     private void handleClassLoadingError(String routeName, String routeImplementation) {
         logger.error("Could not load implementation ({}) for Route {}", routeName, routeImplementation);
-        throw new RuntimeException("Error loading route from config.");
+        throw new RuntimeException("Error creating route from config.");
     }
 
     private ViewHandler instantiateViewHandler(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
