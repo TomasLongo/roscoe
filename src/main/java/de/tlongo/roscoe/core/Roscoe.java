@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static spark.Spark.*;
 public class Roscoe {
@@ -17,32 +18,24 @@ public class Roscoe {
 
     public static void main(String[] args) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         new Roscoe().go();
-
-        /**
-         * Start the web app by reading the config and creating the routes.
-         */
-
-        // 1. Determine the framework route and export to a property
-        //   a. if none is specified in the config, determine it by yourself
-        //   b. create and store paths to folders under the fw root
-        //      - templates
-        //      - views
-        //      - assets
-        //
-        // 2. Create the routes
-        //  a. For every route in the config, create a spark-route and register it.
     }
 
+    /**
+     * Initialises Roscoe and fires up the web server
+     */
     private void go() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        File file = new File(".");
-        logger.debug("Roscoe Root at: {}", file.toPath().toAbsolutePath().toString());
-        System.setProperty("roscoe.root", file.toPath().toAbsolutePath().toString());
+        Path roscoeRoot = new File(".").toPath().toAbsolutePath();
+        logger.debug("Roscoe Root at: {}", roscoeRoot.toString());
+        System.setProperty("roscoe.root", roscoeRoot.toString());
 
         ConfigManager configManager = new ConfigManager();
+
+        // NOTE: According to the Spark doc this method has to be called before any other
+        //       Spark method
         externalStaticFileLocation(System.getProperty("roscoe.root"));
 
         ViewHandler viewHandler = instantiateViewHandler(configManager.getConfigItem("core", "viewhandler").asString());
-        
+
         JsonArray routeArray = configManager.getConfigItem("routes", "routes").jsonElement().getAsJsonArray();
         routeArray.forEach(route -> {
             JsonObject jsonRoute = route.getAsJsonObject();
@@ -72,7 +65,10 @@ public class Roscoe {
 
         });
     }
-    
+
+    /**
+     * Adds a RoscoeRoute to Spark based on the request method
+     */
     private void addRouteToSpark(RoscoeRoute route) {
         if (route.getMethod().equals("GET")) {
             get(route.getRouteUrl(), route);
@@ -93,6 +89,10 @@ public class Roscoe {
         throw new RuntimeException("Error creating route from config.");
     }
 
+    /**
+     * Instantiates a view handler denoted by a classname
+     * @param className The qualified name of the class to instantiate
+     */
     private ViewHandler instantiateViewHandler(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         logger.debug("loading viewhandler {}", className);
         Class viewHandlerClass = Class.forName(className);
